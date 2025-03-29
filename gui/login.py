@@ -1,4 +1,9 @@
 from globals import *
+from cryptography.hazmat.primitives.ciphers.aead import AESGCM
+import binascii
+
+ENCRYPTION_KEY = bytes.fromhex("6821be3c5fb0deaa8ed7c8ecb67241a17c6b164986bf2bc20b615b0eff805736")
+NONCE = bytes.fromhex("981581d01d703b1d4c79701f")
 
 class LoginWindow(QDialog):
     def __init__(self):
@@ -112,18 +117,33 @@ class LoginWindow(QDialog):
     def get_token(self):
         return context.token_input.text()
 
+    def encrypt_token(self, token: str) -> str:
+        aesgcm = AESGCM(ENCRYPTION_KEY)
+        encrypted_token = aesgcm.encrypt(NONCE, token.encode(), None)
+        return binascii.hexlify(encrypted_token).decode()
+
+    def decrypt_token(self, encrypted_token: str) -> str:
+        try:
+            aesgcm = AESGCM(ENCRYPTION_KEY)
+            decrypted_token = aesgcm.decrypt(NONCE, binascii.unhexlify(encrypted_token), None)
+            return decrypted_token.decode()
+        except Exception:
+            return ""  
+            
     def load_cached_token(self):
         try:
             with open(".token_cache", "r") as f:
-                return f.read().strip()
-        except FileNotFoundError:
+                encrypted_token = f.read().strip()
+            return self.decrypt_token(encrypted_token)
+        except (FileNotFoundError, ValueError):
             return ""
 
     def accept(self):
         token = self.get_token()
         if token and api.login(token):
+            encrypted_token = self.encrypt_token(token)
             with open(".token_cache", "w") as f:
-                f.write(token)
+                f.write(encrypted_token)
             super().accept()
         else:
             QMessageBox.warning(self, "Login Failed", "Invalid token. Please make sure it is formatted correctly.")
