@@ -9,8 +9,12 @@ class LoginWindow(QDialog):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("Login - Lazer")
+        self.setWindowIcon(QIcon("icon.ico"))
         self.setFixedSize(350, 150)
-        self.set_background_image()
+        self.setStyleSheet("""
+            background-color: #121212;
+            color: white;
+        """)
         
         layout = QVBoxLayout()
         layout.setContentsMargins(20, 15, 20, 15)
@@ -19,40 +23,62 @@ class LoginWindow(QDialog):
         context.token_label.setFont(QFont("Arial", 12, QFont.Weight.Bold))
         context.token_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
         context.token_label.setStyleSheet("""
-            background-color: rgba(255, 255, 255, 0.3);
+            background-color: rgba(18, 18, 18, 0.9);
+            color: white;
             border-radius: 8px;
             padding: 6px;
             margin: 0 30px;
+            border-bottom: 2px solid #87CEEB;
         """)
 
         context.token_input = QLineEdit()
         context.token_input.setEchoMode(QLineEdit.EchoMode.Password)
         context.token_input.setFont(QFont("Arial", 12))
         context.token_input.setStyleSheet("""
-            background-color: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.3);
+            background-color: rgba(35, 35, 35, 0.9);
+            border: 1px solid #444;
             border-radius: 5px;
             padding: 8px;
-            color: black;
+            color: white;
+            selection-background-color: #87CEEB;
         """)
 
         self.help_btn = QPushButton("?")
         self.help_btn.setFixedSize(28, 28)
         self.help_btn.setStyleSheet("""
             QPushButton {
-                background-color: rgba(255, 255, 255, 0.3);
+                background-color: rgba(35, 35, 35, 0.9);
                 border-radius: 14px;
-                color: black;
+                color: white;
+                border: 1px solid #FFB6C1;
             }
             QPushButton:hover {
-                background-color: rgba(255, 255, 255, 0.6);
+                background-color: rgba(50, 50, 50, 0.9);
+                border: 2px solid #FFB6C1;
+            }
+            QPushButton:pressed {
+                background-color: rgba(35, 35, 35, 0.9);
             }
         """)
         self.help_btn.clicked.connect(self.show_help)
 
         self.visibility_btn = QPushButton("👁")
         self.visibility_btn.setFixedSize(28, 28)
-        self.visibility_btn.setStyleSheet(self.help_btn.styleSheet())
+        self.visibility_btn.setStyleSheet("""
+            QPushButton {
+                background-color: rgba(35, 35, 35, 0.9);
+                border-radius: 14px;
+                color: white;
+                border: 1px solid #87CEEB;
+            }
+            QPushButton:hover {
+                background-color: rgba(50, 50, 50, 0.9);
+                border: 2px solid #87CEEB;
+            }
+            QPushButton:pressed {
+                background-color: rgba(35, 35, 35, 0.9);
+            }
+        """)
         self.visibility_btn.clicked.connect(self.toggle_visibility)
 
         btn_layout = QHBoxLayout()
@@ -65,12 +91,18 @@ class LoginWindow(QDialog):
         self.login_btn.setFixedSize(120, 40)
         self.login_btn.setStyleSheet("""
             QPushButton {
-                background-color: rgba(255, 255, 255, 0.3);
-                color: black;
+                background-color: rgba(35, 35, 35, 0.9);
+                color: white;
                 border-radius: 5px;
+                border: 1px solid #87CEEB;
+                font-weight: bold;
             }
             QPushButton:hover {
-                background-color: rgba(255, 255, 255, 0.6);
+                background-color: rgba(50, 50, 50, 0.9);
+                border: 2px solid #87CEEB;
+            }
+            QPushButton:pressed {
+                background-color: rgba(35, 35, 35, 0.9);
             }
         """)
         self.login_btn.clicked.connect(self.accept)
@@ -83,14 +115,6 @@ class LoginWindow(QDialog):
         self.cached_token = self.load_cached_token()
         if self.cached_token:
             context.token_input.setText(self.cached_token)
-
-    def set_background_image(self):
-        pixmap = QPixmap("assets/background.jpg")
-        background_label = QLabel(self)
-        background_label.setPixmap(pixmap)
-        background_label.setGeometry(self.rect())
-        background_label.setScaledContents(True)
-        self.setAutoFillBackground(True)
 
     def toggle_visibility(self):
         current = context.token_input.echoMode()
@@ -112,6 +136,26 @@ class LoginWindow(QDialog):
         msg.setWindowTitle("Token Help")
         msg.setTextFormat(Qt.TextFormat.RichText)
         msg.setText(help_text)
+        msg.setStyleSheet("""
+            QMessageBox {
+                background-color: #1a1a1a;
+                color: white;
+            }
+            QLabel {
+                color: white;
+            }
+            QPushButton {
+                background-color: #2d2d2d;
+                color: white;
+                border-radius: 4px;
+                padding: 6px 12px;
+                min-width: 80px;
+            }
+            QPushButton:hover {
+                background-color: #3d3d3d;
+                border: 1px solid #87CEEB;
+            }
+        """)
         msg.exec()
 
     def get_token(self):
@@ -146,4 +190,28 @@ class LoginWindow(QDialog):
                 f.write(encrypted_token)
             super().accept()
         else:
-            QMessageBox.warning(self, "Login Failed", "Invalid token. Please make sure it is formatted correctly.")
+            error_box = QMessageBox()
+            error_box.setWindowTitle("Login Failed")
+            error_box.setText("Invalid token. Please make sure it is formatted correctly.")
+            error_box.setIcon(QMessageBox.Icon.Warning)
+            error_box.setStyleSheet("""
+                QMessageBox {
+                    background-color: #1a1a1a;
+                    color: white;
+                }
+                QLabel {
+                    color: white;
+                }
+                QPushButton {
+                    background-color: #2d2d2d;
+                    color: white;
+                    border-radius: 4px;
+                    padding: 6px 12px;
+                    min-width: 80px;
+                }
+                QPushButton:hover {
+                    background-color: #3d3d3d;
+                    border: 1px solid #FFB6C1;
+                }
+            """)
+            error_box.exec()
