@@ -10,7 +10,7 @@ from PyQt6.QtWidgets import (
     QProgressBar, QHBoxLayout, QMessageBox, QListWidget, QListWidgetItem, 
     QScrollArea, QGroupBox, QAbstractItemView, QDialogButtonBox
 )
-from PyQt6.QtGui import QFont, QPixmap
+from PyQt6.QtGui import QFont, QPixmap,QIcon
 from PyQt6.QtCore import Qt, QThread, pyqtSignal, QSize
 
 # define constants (this has to be done before importing the rest otherwise they cant access them)
@@ -30,6 +30,8 @@ QToolTip {
 class LazerContext:
     token = None
     user = {}
+    dms = []
+    servers = []
 
 # create instance of ZE DEADLY LAZERRRRRRRR
 context = LazerContext()
@@ -41,3 +43,4 @@ from workers.deletion import DeletionWorker
 from gui.channel_selector import ChannelSelector
 from gui.login import LoginWindow
 from gui.dashboard import MainWindow
+
