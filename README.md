@@ -23,7 +23,7 @@ pip install -r requirements.txt
 🚀 Usage
 Launch the application:
 
-python lazer.py  
+python main.py  
 
 Input:
 
