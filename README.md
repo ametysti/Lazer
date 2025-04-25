@@ -28,9 +28,7 @@ python main.py
 Input:
 
 Discord Token (listed below 🔑)
-  
-Channel ID (listed below 🆔)
-  
+    
 Start cleaning
   
 🔑 Get Discord Token
@@ -43,12 +41,6 @@ Find messages request → Copy authorization header
 
 ⚠️ WARNING: This token grants full account access! Never share it.
   
-🆔 Get Channel ID 
-  
-Enable Developer Mode:
-User Settings → Advanced → Developer Mode
-
-Right-click the target DM → "Copy Channel ID"
 
 🤝 Contributing
 
