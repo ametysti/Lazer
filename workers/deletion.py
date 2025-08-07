@@ -62,7 +62,7 @@ class DeletionWorker(QThread):
                     self.error_occurred.emit(str(e), context)
                 finally:
                     self.message_progress.emit()
-                    time.sleep(0.6)
+                    time.sleep(1.6)
 
         except Exception as e:
             self.error_occurred.emit(str(e), "Global")
