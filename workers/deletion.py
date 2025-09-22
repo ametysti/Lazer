@@ -100,21 +100,26 @@ class DeletionWorker(QThread):
             params = {"limit": 100}
             if before:
                 params["before"] = before
-                
+
             response = self.session.get(
                 f"{BASE_URL}/channels/{channel_id}/messages",
                 headers=self.headers,
                 params=params,
                 timeout=15
             )
+
             messages = response.json()
-            
+
+            if not isinstance(messages, list):
+                return
+
             for msg in messages:
                 if msg["author"]["id"] == self.user_id:
                     self.all_messages.append((msg["id"], channel_id, context))
-            
+
             if len(messages) < 100:
                 break
+
             before = messages[-1]["id"]
 
     def delete_message(self, message_id, channel_id):
